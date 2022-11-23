@@ -5,14 +5,16 @@ inference.py定义模型文件调用的接口
 ​	***NerfRunner.inference***
 
 参数：
-    ```
-    pos: [float: x, float: y, float: z] 
-    	场景相机的坐标 
-    dir: [float: x_angle, float: y_angle,float:  z_angle] 
-    	场景相机的方向 用欧拉角表示 单位是度 
-    euler_mode: str
-    	欧拉角模式，指定绕三个轴旋转的顺序
-    ```
+ ```
+ 	pos: [float: x, float: y, float: z] 
+     	场景相机的坐标 
+     dir: [float: x_angle, float: y_angle,float:  z_angle] 
+     	场景相机的方向 用欧拉角表示 单位是度 (默认初始相机朝向-z轴方向)
+     euler_mode: str
+     	欧拉角模式，指定绕三个轴旋转的顺序
+ ```
+
+
 
 返回：
 

@@ -15,6 +15,9 @@
 
 数据集和模型比较大，放在网盘上了，链接在对应的readme文件里，也可以直接在网盘文件夹里找
 
+- ***ATTENTION***  使用`git lfs`将训练好的模型上传了，clone时如果网络不好下载不下来，可以用`GIT_LFS_SKIP_SMUDGE=1 git clone <repository-add>`来跳过该文件。
+
+- *P.S.* 使用系统的包管理器安装`git lfs`，如ubuntu下`apt install git-lfs`。 
 
 
 ### 项目结构

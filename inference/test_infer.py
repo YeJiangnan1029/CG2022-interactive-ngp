@@ -2,6 +2,7 @@ import numpy as np
 
 import inference
 import cv2 as cv
+from matplotlib import pyplot as plt
 
 nr = inference.NerfRunner("../models/lego_4/params.pkl")
 img = nr.inference([0, -3.5, 3.5], [45, 0, 0])
@@ -11,6 +12,8 @@ img = nr.inference([0, -3.5, 3.5], [45, 0, 0])
 
 # cv.imshow("inference result", img)
 # cv.waitKey(0)
-img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-cv.imwrite("./temp/test.png", img)
-print("rendered image is saved.")
+plt.imshow(img)
+plt.show(block=True)
+#img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+#cv.imwrite("./temp/test.png", img)
+#print("rendered image is saved.")

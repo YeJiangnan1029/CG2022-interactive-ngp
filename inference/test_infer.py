@@ -5,15 +5,25 @@ import cv2 as cv
 from matplotlib import pyplot as plt
 
 nr = inference.NerfRunner("../models/lego_4/params.pkl")
-img = nr.inference([0, -3.5, 3.5], [45, 0, 0])
-# for i in range(1, 11):
-#     print(i)
-#     img = nr.inference(1, 1)
-
-# cv.imshow("inference result", img)
-# cv.waitKey(0)
-plt.imshow(img)
-plt.show(block=True)
-#img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-#cv.imwrite("./temp/test.png", img)
-#print("rendered image is saved.")
+x, y, z = 0, -3.5, 3.5
+while (True):
+    img = nr.inference([x, y, z], [45, 0, 0])
+    cv.imshow("", img)
+    key = cv.waitKey(0)
+    if (chr(key) == 'a'):
+        x -= 0.5
+    elif (chr(key) == 'd'):
+        x += 0.5
+    elif (chr(key) == 'w'):
+        y += 0.5
+    elif (chr(key) == 's'):
+        y -= 0.5
+    elif (chr(key) == 'z'):
+        z -= 0.5
+    elif (chr(key) == 'c'):
+        z += 0.5
+    elif (chr(key) == 'q'):
+        break
+    #img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+    #cv.imwrite("./temp/test.png", img)
+    #print("rendered image is saved.")

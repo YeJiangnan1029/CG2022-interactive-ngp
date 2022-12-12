@@ -30,6 +30,7 @@ class NerfRunner:
         pose = self.get_pose_from_pos_dir(pos, dir, mode=euler_mode)
         print(pose)
         img = self.runner.render_img_with_pose(pose)
+        del pose
         img = (img * 255 + 0.5).clip(0, 255).astype('uint8')
         return img
 

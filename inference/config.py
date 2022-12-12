@@ -36,13 +36,14 @@ expdecay=dict(
     decay_end=None
 )
 dataset_type = 'NerfDataset'
-dataset_dir = '../data/lego_4'
+dataset_dir = '../data/cafe'
 dataset = dict(
     train=dict(
         type=dataset_type,
         root_dir=dataset_dir,
         batch_size=4096,
         mode='train',
+        aabb_scale=8,
     ),
     val=dict(
         type=dataset_type,
@@ -50,6 +51,7 @@ dataset = dict(
         batch_size=4096,
         mode='val',
         preload_shuffle=False,
+        aabb_scale=8,
     ),
     test=dict(
         type=dataset_type,
@@ -57,10 +59,11 @@ dataset = dict(
         batch_size=4096,
         mode='test',
         preload_shuffle=False,
+        aabb_scale=8,
     ),
 )
 
-exp_name = "lego_1_4"
+exp_name = "cafe"
 log_dir = "./logs"
 tot_train_steps = 40000
 # Background color, value range from 0 to 1
@@ -72,12 +75,12 @@ near_distance = 0.2
 n_rays_per_batch = 4096
 n_training_steps = 16
 # Expected number of sampling points per batch
-target_batch_size = 1<<16
+target_batch_size = 1<<18
 # Set const_dt=True for higher performance
 # Set const_dt=False for faster convergence
 const_dt=True
 # Use fp16 for faster training
-fp16 = False
+fp16 = True
 # Load pre-trained model
 load_ckpt = False
 # path of checkpoint file, None for default path

@@ -1,8 +1,6 @@
 import inference
 import numpy as np
 import cv2
-import matplotlib
-from matplotlib import pyplot as plt
 from math import *
 from scipy.spatial.transform import Rotation
 
@@ -14,56 +12,46 @@ base_r = Rotation.from_euler("YXZ", eye_angle+[0], degrees=True).as_matrix()
 base_vec = np.matmul(unit_vec, base_r)  # 初始法向量
 del base_r, unit_vec
 
+nr = inference.NerfRunner("../models/lego_4/params.pkl")
 
-def kbd_press(event):
-    global x, y, z, eye_angle
+while (True):
+    img = nr.inference([x, y, z], [eye_angle[1], eye_angle[0], 0], "YXZ")
+    cv2.imshow("demo",cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2RGB),(800,800)))
+    key = cv2.waitKey(0)
+
     r = Rotation.from_euler(
         "ZXY", [eye_angle[0]-180, 0, 0], degrees=True).as_matrix()
     up_r = Rotation.from_euler(
         "YXZ", [eye_angle[1]-90, 0, 0], degrees=True).as_matrix()
     vec = np.matmul(base_vec, r)
     up = np.matmul(base_vec, up_r)
-    if (event.key == 'a'):
+    if (chr(key) == 'a'):
         x -= vec[0]
         y += vec[1]
-    if (event.key == 'd'):
+    if (chr(key) == 'd'):
         x += vec[0]
         y -= vec[1]
-    if (event.key == 'w'):
+    if (chr(key) == 'w'):
         x += vec[1]
         y += vec[0]
-    if (event.key == 's'):
+    if (chr(key) == 's'):
         x -= vec[1]
         y -= vec[0]
-    if (event.key == ' '):
+    if (chr(key) == ' '):
         x -= up[1]
         y -= up[2]
         z -= up[0]
-    if (event.key == 'control'):
+    if (chr(key) == 'c'):
         x += up[1]
         y += up[2]
         z += up[0]
-    if (event.key == 'q'):
+    if (chr(key) == 'q'):
         exit(0)
-    if (event.key == 'right'):
+    if (chr(key) == 'l'):
         eye_angle[0] -= 10
-    if (event.key == 'left'):
+    if (chr(key) == 'j'):
         eye_angle[0] += 10
-    if (event.key == 'up'):
+    if (chr(key) == 'i'):
         eye_angle[1] += 10
-    if (event.key == 'down'):
+    if (chr(key) == 'k'):
         eye_angle[1] -= 10
-
-
-nr = inference.NerfRunner("../models/lego_4/params.pkl")
-matplotlib.use("TkAgg")
-plt.rcParams['keymap.save'] = ''
-fig = plt.figure()
-fig.canvas.mpl_connect("key_press_event", kbd_press)
-
-while (True):
-    img = nr.inference([x, y, z], [eye_angle[1], eye_angle[0], 0], "YXZ")
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    plt.show(block=False)
-    print("pos:", [x, y, z], "dir", eye_angle)
-    plt.waitforbuttonpress(10)

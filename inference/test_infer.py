@@ -1,57 +1,59 @@
 import inference
 import numpy as np
-import cv2 as cv
+import cv2
 from math import *
 from scipy.spatial.transform import Rotation
 
-x, y, z = 0, -20, 5
-eye_angle = [0, 90]
+def calcRotationMatrix(theta, axis):
+    c = cos(theta / 360 * pi) # theta/2 (degree) ---> radian   
+    s = sin(theta / 360 * pi)
+    quaternion = [i * s for i in axis] + [c]
+    rot = Rotation.from_quat(quaternion)
+    return rot.as_matrix()
 
-unit_vec = [-1, 0, 0]
-base_r = Rotation.from_euler("YXZ", eye_angle + [0], degrees=True).as_matrix()
-base_vec = np.matmul(unit_vec, base_r)  # 初始法向量
-del base_r, unit_vec
+
+base_up = [0, 1, 0]
+base_front = [0, 0, -1]
+rotation = Rotation.from_euler("XYZ", [90, 0, 0], True).as_matrix()
+
+pos = [0, -20, 5]
 
 nr = inference.NerfRunner("../models/cafe/params.pkl")
 
 while (True):
-    img = nr.inference([x, y, z], [eye_angle[1], eye_angle[0], 0], "YXZ")
-    cv.imshow("demo", cv.resize(cv.cvtColor(img, cv.COLOR_BGR2RGB), (200, 200)))
-    key = cv.waitKey(0)
+    up = np.matmul(rotation, base_up)
+    front = np.matmul(rotation, base_front)
+    right = np.cross(front, up)
+    img = nr.inference(pos, Rotation.from_matrix(rotation).as_euler("XZY", degrees=True), "XYZ")
+    cv2.imshow("demo", cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), (800, 800)))
+    key = cv2.waitKey(0)
 
-    r = Rotation.from_euler(
-        "ZXY", [eye_angle[0] - 180, 0, 0], degrees=True).as_matrix()
-    up_r = Rotation.from_euler(
-        "YXZ", [eye_angle[1] - 90, 0, 0], degrees=True).as_matrix()
-    vec = np.matmul(base_vec, r)
-    up = np.matmul(base_vec, up_r)
-    if chr(key) == 'a':
-        x -= vec[0]
-        y += vec[1]
-    if chr(key) == 'd':
-        x += vec[0]
-        y -= vec[1]
-    if chr(key) == 'w':
-        x += vec[1]
-        y += vec[0]
-    if chr(key) == 's':
-        x -= vec[1]
-        y -= vec[0]
-    if chr(key) == ' ':
-        x -= up[1]
-        y -= up[2]
-        z -= up[0]
-    if chr(key) == 'c':
-        x += up[1]
-        y += up[2]
-        z += up[0]
-    if chr(key) == 'q':
-        exit(0)
-    if chr(key) == 'l':
-        eye_angle[0] -= 10
-    if chr(key) == 'j':
-        eye_angle[0] += 10
-    if chr(key) == 'i':
-        eye_angle[1] += 10
-    if chr(key) == 'k':
-        eye_angle[1] -= 10
+    match chr(key):
+        case 'a':
+            pos -= right
+        case 'd':
+            pos += right
+        case 'w':
+            pos += front
+        case 's':
+            pos -= front
+        case ' ':
+            pos += up
+        case 'c':
+            pos -= up
+
+        case 'l':
+            rot = calcRotationMatrix(-5, up)
+            rotation = np.matmul(rot, rotation)
+        case 'j':
+            rot = calcRotationMatrix(5, up)
+            rotation = np.matmul(rot, rotation)
+        case 'i':
+            rot = calcRotationMatrix(5, right)
+            rotation = np.matmul(rot, rotation)
+        case 'k':
+            rot = calcRotationMatrix(-5, right)
+            rotation = np.matmul(rot, rotation)
+
+        case 'q':
+            exit(0)
